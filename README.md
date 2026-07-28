@@ -104,3 +104,52 @@ Data Engineer
 - Azure
 - Apache Kafka
 - Apache Airflow
+
+---
+
+# Project Workflow
+
+1. Extract news articles from News API.
+2. Publish news events to Apache Kafka.
+3. Consume events from Kafka.
+4. Transform and clean the data using PySpark.
+5. Validate processed data.
+6. Perform sentiment analysis.
+7. Store curated data in Amazon S3.
+8. Load curated data into Amazon Redshift.
+9. Orchestrate the workflow using Apache Airflow.
+10. Monitor the pipeline using centralized logging and GitHub Actions.
+
+---
+
+# Technology Stack
+
+- Python
+- Apache Kafka
+- Apache Airflow
+- Apache Spark (PySpark)
+- Amazon S3
+- Amazon Redshift
+- Docker
+- Docker Compose
+- GitHub Actions
+- Pytest
+
+---
+
+# Repository Structure
+
+```text
+airflow/
+architecture/
+aws/
+configs/
+data/
+docs/
+kafka/
+pyspark/
+sentiment/
+tests/
+utils/
+validation/
+```
