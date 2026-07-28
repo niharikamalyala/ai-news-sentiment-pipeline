@@ -6,6 +6,7 @@ import requests
 from dotenv import load_dotenv
 
 from configs.config import CATEGORY, COUNTRY, NEWS_API_URL, PAGE_SIZE
+from utils.logger import logger
 
 
 load_dotenv()
@@ -29,6 +30,7 @@ def fetch_news() -> dict:
         params=params,
         timeout=30,
     )
+
     response.raise_for_status()
 
     return response.json()
@@ -39,15 +41,46 @@ def save_raw_news(news_data: dict) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with output_path.open("w", encoding="utf-8") as file:
-        json.dump(news_data, file, indent=2, ensure_ascii=False)
+        json.dump(
+            news_data,
+            file,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    logger.info(
+        "Raw news data saved to %s.",
+        output_path,
+    )
 
 
 def main() -> None:
-    news_data = fetch_news()
-    save_raw_news(news_data)
+    logger.info("Starting News API ingestion.")
 
-    article_count = len(news_data.get("articles", []))
-    print(f"Successfully collected {article_count} news articles.")
+    try:
+        news_data = fetch_news()
+        save_raw_news(news_data)
+
+        article_count = len(news_data.get("articles", []))
+
+        logger.info(
+            "Successfully collected %s news articles.",
+            article_count,
+        )
+
+    except requests.RequestException as error:
+        logger.exception(
+            "News API request failed: %s",
+            error,
+        )
+        raise
+
+    except Exception as error:
+        logger.exception(
+            "News ingestion failed: %s",
+            error,
+        )
+        raise
 
 
 if __name__ == "__main__":
