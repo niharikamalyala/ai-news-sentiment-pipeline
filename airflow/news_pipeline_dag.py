@@ -24,8 +24,13 @@ with DAG(
     )
 
     process_news = BashOperator(
-        task_id="process_news",
-        bash_command="python pyspark/process_news.py",
-    )
+    task_id="process_news",
+    bash_command="python pyspark/process_news.py",
+)
 
-    ingest_news >> publish_to_kafka >> process_news
+analyze_sentiment = BashOperator(
+    task_id="analyze_sentiment",
+    bash_command="python sentiment/analyze_sentiment.py",
+)
+
+ingest_news >> publish_to_kafka >> process_news >> analyze_sentiment
