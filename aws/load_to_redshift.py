@@ -17,15 +17,25 @@ def get_connection():
     )
 
 
-def main():
+def load_curated_data():
     connection = get_connection()
     cursor = connection.cursor()
 
-    print("Successfully connected to Amazon Redshift.")
+    copy_command = f"""
+    COPY news_sentiment
+    FROM 's3://{os.getenv("S3_BUCKET_NAME")}/curated/news_sentiment/'
+    IAM_ROLE '{os.getenv("REDSHIFT_IAM_ROLE")}'
+    FORMAT AS PARQUET;
+    """
+
+    cursor.execute(copy_command)
+    connection.commit()
+
+    print("Successfully loaded curated data into Amazon Redshift.")
 
     cursor.close()
     connection.close()
 
 
 if __name__ == "__main__":
-    main()
+    load_curated_data()
