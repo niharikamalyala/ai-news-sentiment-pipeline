@@ -1,0 +1,30 @@
+{
+  "status": "ok",
+  "totalResults": 2,
+  "articles": [
+    {
+      "source": {
+        "id": "tech-news",
+        "name": "Tech News Daily"
+      },
+      "author": "Jane Smith",
+      "title": "AI investment continues to grow across major industries",
+      "description": "Companies are increasing investment in artificial intelligence and cloud infrastructure.",
+      "url": "https://example.com/ai-investment",
+      "publishedAt": "2026-07-28T12:00:00Z",
+      "content": "Organizations are expanding AI initiatives to improve automation and analytics."
+    },
+    {
+      "source": {
+        "id": "business-news",
+        "name": "Business News Daily"
+      },
+      "author": "John Lee",
+      "title": "Technology stocks decline after weak quarterly results",
+      "description": "Several technology companies reported lower-than-expected quarterly earnings.",
+      "url": "https://example.com/technology-stocks",
+      "publishedAt": "2026-07-28T13:00:00Z",
+      "content": "Technology stocks declined as investors reacted to weaker financial results."
+    }
+  ]
+}
