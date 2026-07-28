@@ -1,3 +1,13 @@
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![PySpark](https://img.shields.io/badge/PySpark-ETL-orange)
+![Kafka](https://img.shields.io/badge/Kafka-Streaming-black)
+![Airflow](https://img.shields.io/badge/Airflow-Orchestration-green)
+![AWS](https://img.shields.io/badge/AWS-Cloud-yellow)
+![Docker](https://img.shields.io/badge/Docker-Container-blue)
+![GitHub Actions](https://img.shields.io/badge/CI-GitHub_Actions-success)
+![License](https://img.shields.io/badge/License-MIT-brightgreen)
+
+
 # AI-Powered News Sentiment Data Pipeline
 
 ## Overview
