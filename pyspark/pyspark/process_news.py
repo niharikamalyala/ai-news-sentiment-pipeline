@@ -9,8 +9,12 @@ from pyspark.sql.functions import (
     trim,
 )
 
+from utils.logger import logger
+
 
 def create_spark_session() -> SparkSession:
+    logger.info("Creating Spark session.")
+
     return (
         SparkSession.builder
         .appName("NewsDataProcessing")
@@ -19,37 +23,75 @@ def create_spark_session() -> SparkSession:
 
 
 def process_news() -> None:
-    spark = create_spark_session()
+    spark = None
 
-    input_path = "data/raw/sample_news.json"
-    output_path = "data/processed/news_articles"
+    try:
+        logger.info("Starting PySpark news transformation.")
 
-    news_df = (
-        spark.read
-        .option("multiline", "true")
-        .json(input_path)
-    )
+        spark = create_spark_session()
 
-    articles_df = news_df.selectExpr("explode(articles) AS article")
+        input_path = "data/raw/sample_news.json"
+        output_path = "data/processed/news_articles"
 
-    processed_df = articles_df.select(
-        col("article.source.name").alias("source_name"),
-        trim(col("article.author")).alias("author"),
-        trim(col("article.title")).alias("title"),
-        trim(col("article.description")).alias("description"),
-        col("article.url").alias("url"),
-        to_timestamp(col("article.publishedAt")).alias("published_at"),
-        lower(trim(col("article.content"))).alias("content"),
-        current_timestamp().alias("processed_at"),
-    )
+        logger.info("Reading raw news data from %s.", input_path)
 
-    Path("data/processed").mkdir(parents=True, exist_ok=True)
+        news_df = (
+            spark.read
+            .option("multiline", "true")
+            .json(input_path)
+        )
 
-    processed_df.write.mode("overwrite").parquet(output_path)
+        articles_df = news_df.selectExpr(
+            "explode(articles) AS article"
+        )
 
-    print(f"Processed {processed_df.count()} news articles.")
+        processed_df = articles_df.select(
+            col("article.source.name").alias("source_name"),
+            trim(col("article.author")).alias("author"),
+            trim(col("article.title")).alias("title"),
+            trim(col("article.description")).alias("description"),
+            col("article.url").alias("url"),
+            to_timestamp(
+                col("article.publishedAt")
+            ).alias("published_at"),
+            lower(
+                trim(col("article.content"))
+            ).alias("content"),
+            current_timestamp().alias("processed_at"),
+        )
 
-    spark.stop()
+        Path("data/processed").mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        processed_df.write.mode("overwrite").parquet(
+            output_path
+        )
+
+        article_count = processed_df.count()
+
+        logger.info(
+            "Successfully processed %s news articles.",
+            article_count,
+        )
+
+        logger.info(
+            "Processed news data saved to %s.",
+            output_path,
+        )
+
+    except Exception as error:
+        logger.exception(
+            "PySpark news transformation failed: %s",
+            error,
+        )
+        raise
+
+    finally:
+        if spark is not None:
+            spark.stop()
+            logger.info("Spark session stopped.")
 
 
 if __name__ == "__main__":
